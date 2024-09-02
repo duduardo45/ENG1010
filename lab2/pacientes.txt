@@ -1,0 +1,17 @@
+E - 1 - Verde
+E - 2 - Vermelha
+E - 3 - Verde
+E - 4 - Amarela
+E - 5 - Vermelha
+E - 6 - Vermelha
+E - 7 - Verde
+E - 8 - Vermelha
+S - 5 - Vermelha
+S - 4 - Amarela
+E - 9 - Verde
+E - 10 - Amarela
+E - 11 - Vermelha
+E - 12 - Amarela
+S - 2 - Vermelha
+S - 6 - Vermelha
+S - 3 - Verde
