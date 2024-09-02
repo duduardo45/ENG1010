@@ -1,0 +1,5 @@
+# não sei o que por aqui ainda.
+venv/
+.venv/
+env/
+.env/
