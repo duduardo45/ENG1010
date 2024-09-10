@@ -14,6 +14,13 @@ struct fila_paciente {
 };
 typedef struct fila_paciente Fila;
 
+Fila* insere_paciente(Paciente* p, Fila* f);
+Fila* atende_paciente(int pos, Fila* f);
+char* acha_condicao(unsigned short condicao);
+void exibe_paciente(Paciente* p);
+void exibe_fila(Fila* f);
+
+
 Fila* insere_paciente(Paciente* p, Fila* f) {
     Fila* pf = malloc(sizeof(Fila));
     pf->paciente = p;
@@ -68,19 +75,27 @@ char* acha_condicao(unsigned short condicao) {
     if (condicao == 0) return "Vermelha";
     else if (condicao == 1) return "Amarela";
     else if (condicao == 2) return "Verde";
+    return "";
 }
 
 void exibe_paciente(Paciente* p) {
     printf("%d - %s\n", p->chegada, acha_condicao(p->condicao));
+    return;
 }
 
 void exibe_fila(Fila* f) {
+    int contagem[] = {0, 0, 0};
     printf("\nA fila está assim:\n");
     while (f != NULL) {
         exibe_paciente(f->paciente);
+        contagem[f->paciente->condicao]++;
         f = f->prox;
     }
-    printf("\n");
+    for (int i = 0; i < 3; i++) {
+        if (contagem[i]) printf("\npacientes %s na fila: %d", acha_condicao(i), contagem[i]);
+    };
+    printf("\n\n");
+    return;
 }
 
 int main(void) {
