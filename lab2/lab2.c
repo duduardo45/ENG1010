@@ -98,6 +98,17 @@ void exibe_fila(Fila* f) {
     return;
 }
 
+void free_fila(Fila* f) {
+    Fila* p = NULL;
+    while(f !=NULL) {
+        p = f->prox;
+        free(f->paciente);
+        free(f);
+        f = p;
+    }
+    return;
+}
+
 int main(void) {
     // ler o arquivo de pacientes
     FILE* entradas = fopen("pacientes.txt", "r");
@@ -125,5 +136,6 @@ int main(void) {
 
         exibe_fila(fila);
     }
+    free_fila(fila);
     fclose(entradas);
 }
