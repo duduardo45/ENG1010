@@ -118,10 +118,11 @@ void exibe_preordem(Nodo *p)
 
 int main(void)
 {
-    int chaves[10] = { 10, 5, 15, 3, 7, 13, 20, 1, 4, 6 };
+    int chaves[10] = {10, 5, 15, 3, 7, 13, 20, 1, 4, 6};
     Nodo *arvore = NULL;
     Elemento *fila = NULL;
-    for (int i=0;i<10;i++){
+    for (int i = 0; i < 10; i++)
+    {
         fila = insere(fila, &arvore, chaves[i]);
         exibe_preordem(arvore);
     }
