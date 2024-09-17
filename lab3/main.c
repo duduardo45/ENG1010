@@ -40,11 +40,13 @@ Elemento *insere_fila(Elemento *fila, Nodo *nodo)
     return fila;
 }
 
-Nodo *realiza_insercao(Nodo *p, int x)
+Nodo *realiza_insercao(Nodo *p, int x, char direcao)
 {
     Nodo *aux = (Nodo *)malloc(sizeof(Nodo));
     aux->chave = x;
     aux->esq = aux->dir = NULL;
+    if (direcao == 'e') p->esq = aux;
+    else if (direcao == 'd') p->dir = aux;
     return aux;
 }
 
@@ -63,12 +65,12 @@ Elemento *insere(Elemento *fila, Nodo **pp, int x)
     Nodo *inserido;
     if (nodo_para_inserir->esq == NULL)
     {
-        inserido = realiza_insercao(nodo_para_inserir->esq, x);
+        inserido = realiza_insercao(nodo_para_inserir, x, 'e');
         return insere_fila(fila, inserido);
     }
     else
     {
-        inserido = realiza_insercao(nodo_para_inserir->dir, x);
+        inserido = realiza_insercao(nodo_para_inserir, x, 'd');
         fila = insere_fila(fila, inserido);
         return fila->prox;
     }
@@ -124,6 +126,7 @@ int main(void)
     for (int i=0;i<10;i++){
         fila = insere(fila, &arvore, chaves[i]);
         exibe_preordem(arvore);
+        printf("\n\n");
     }
 
     return 0;
