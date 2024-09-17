@@ -81,12 +81,12 @@ Nodo *busca_nodo(Nodo *arvore, int chave)
         return arvore;
     }
     Nodo *a = busca_nodo(arvore->esq, chave);
-    Nodo *b = busca_nodo(arvore->dir, chave);
     if (a != NULL)
     {
         return a;
     }
-    else if (b != NULL)
+    Nodo *b = busca_nodo(arvore->dir, chave);
+    if (b != NULL)
     {
         return b;
     }
@@ -118,8 +118,13 @@ void exibe_preordem(Nodo *p)
 
 int main(void)
 {
+    int chaves[10] = { 10, 5, 15, 3, 7, 13, 20, 1, 4, 6 };
     Nodo *arvore = NULL;
     Elemento *fila = NULL;
-    fila = insere(fila, arvore, 10);
-    exibe_preordem(arvore);
+    for (int i=0;i<10;i++){
+        fila = insere(fila, &arvore, chaves[i]);
+        exibe_preordem(arvore);
+    }
+
+    return 0;
 }
