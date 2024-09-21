@@ -45,8 +45,10 @@ Nodo *realiza_insercao(Nodo *p, int x, char direcao)
     Nodo *aux = (Nodo *)malloc(sizeof(Nodo));
     aux->chave = x;
     aux->esq = aux->dir = NULL;
-    if (direcao == 'e') p->esq = aux;
-    else if (direcao == 'd') p->dir = aux;
+    if (direcao == 'e')
+        p->esq = aux;
+    else if (direcao == 'd')
+        p->dir = aux;
     return aux;
 }
 
@@ -74,37 +76,6 @@ Elemento *insere(Elemento *fila, Nodo **pp, int x)
         fila = insere_fila(fila, inserido);
         return fila->prox;
     }
-}
-
-Nodo *busca_nodo(Nodo *arvore, int chave)
-{
-    if (arvore == NULL || arvore->chave == chave)
-    {
-        return arvore;
-    }
-    Nodo *a = busca_nodo(arvore->esq, chave);
-    if (a != NULL)
-    {
-        return a;
-    }
-    Nodo *b = busca_nodo(arvore->dir, chave);
-    if (b != NULL)
-    {
-        return b;
-    }
-    else
-    {
-        return NULL;
-    }
-}
-
-Nodo *cria(int c, Nodo *sae, Nodo *sad)
-{
-    Nodo *p = (Nodo *)malloc(sizeof(Nodo));
-    p->chave = c;
-    p->esq = sae;
-    p->dir = sad;
-    return p;
 }
 
 void exibe_preordem(Nodo *p)
