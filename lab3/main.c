@@ -1,3 +1,17 @@
+/*
+
+Tarefa 3 – Árvores Binárias
+
+a)       a) Inserir por nível as chaves: 10, 5, 15, 3, 7, 13, 20, 1, 4, 6 em uma árvore binária
+
+b)      b) Adicionar à estrutura o nível de cada nó e listar a estrutura
+
+c)       c) Adicionar à estrutura a altura de cada nó e listar a estrutura
+
+d)      d) Adicionar à estrutura o ponteiro para o pai de cada nó e listar a estrutura
+
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #define TRUE 1
@@ -6,6 +20,9 @@
 struct nodo
 {
     int chave;
+    int nivel;
+    int altura;
+    struct nodo *pai;
     struct nodo *esq;
     struct nodo *dir;
 };
@@ -18,14 +35,56 @@ struct elemento_fila
 };
 typedef struct elemento_fila Elemento;
 
+Nodo* cria_nodo(int x, int n, int h, Nodo* pai, Nodo* esq, Nodo* dir) {
+
+    Nodo *nodo = (Nodo *)malloc(sizeof(Nodo));
+    nodo->chave = x;
+    nodo->nivel = n;
+    nodo->altura = h;
+    nodo->pai = pai;
+    nodo->esq = esq;
+    nodo->dir = dir;
+    return nodo;
+}
+
+Elemento* cria_elemento(Nodo* nodo, Elemento* prox) {
+
+    Elemento* el = (Elemento *)malloc(sizeof(Elemento));
+    el->nodo = nodo;
+    el->prox = prox;
+    return el;
+}
+
+void incrementa_altura(Nodo* p) {
+    p->altura++;
+    while (p->pai != NULL) {
+        if (p->pai->esq == p) {
+            p = p->pai;
+            p->altura++;
+        }
+        else return;
+    }
+    return;
+}
+
+Nodo *realiza_insercao(Nodo *p, int x, char direcao)
+{
+    Nodo *aux = cria_nodo(x,p->nivel+1,0,p,NULL,NULL);
+    if (direcao == 'e') {
+        p->esq = aux;
+        incrementa_altura(p);
+    } else if (direcao == 'd') {
+        p->dir = aux;
+    }
+    return aux;
+}
+
 Elemento *insere_fila(Elemento *fila, Nodo *nodo)
 {
     Elemento *aux;
     if (fila == NULL)
     {
-        aux = (Elemento *)malloc(sizeof(Elemento));
-        aux->nodo = nodo;
-        aux->prox = NULL;
+        aux = cria_elemento(nodo, NULL);
         return aux;
     }
     Elemento *atual = fila;
@@ -33,23 +92,9 @@ Elemento *insere_fila(Elemento *fila, Nodo *nodo)
     {
         atual = atual->prox;
     }
-    aux = (Elemento *)malloc(sizeof(Elemento));
-    aux->nodo = nodo;
-    aux->prox = NULL;
+    aux = cria_elemento(nodo, NULL);
     atual->prox = aux;
     return fila;
-}
-
-Nodo *realiza_insercao(Nodo *p, int x, char direcao)
-{
-    Nodo *aux = (Nodo *)malloc(sizeof(Nodo));
-    aux->chave = x;
-    aux->esq = aux->dir = NULL;
-    if (direcao == 'e')
-        p->esq = aux;
-    else if (direcao == 'd')
-        p->dir = aux;
-    return aux;
 }
 
 Elemento *insere(Elemento *fila, Nodo **pp, int x)
@@ -57,9 +102,7 @@ Elemento *insere(Elemento *fila, Nodo **pp, int x)
     Nodo *p = *pp;
     if (p == NULL)
     {
-        p = (Nodo *)malloc(sizeof(Nodo));
-        p->chave = x;
-        p->esq = p->dir = NULL;
+        p = cria_nodo(x,0,0,NULL,NULL,NULL);
         *pp = p;
         return insere_fila(fila, p);
     }
@@ -82,7 +125,15 @@ void exibe_preordem(Nodo *p)
 {
     if (p == NULL)
         printf("arvore nao foi criada\n");
-    printf("ptr_no=%p, chave=%d esq=%p dir=%p\n", p, p->chave, p->esq, p->dir);
+        
+    printf("ptr_no=%p, chave=%d\tnivel=%d\taltura=%d pai=", p, p->chave, p->nivel, p->altura);
+    printf("%p\t",p->pai);
+    if (p->pai == NULL) printf("\t");
+    printf("esq=");
+    printf("%p\t",p->esq);
+    if (p->esq == NULL) printf("\t");
+    printf("dir=%p\n",p->dir);
+
     if (p->esq != NULL)
         exibe_preordem(p->esq);
     if (p->dir != NULL)
