@@ -154,14 +154,33 @@ int checa_ABB(Nodo* p) {
 }
 
 void exibe_checa_ABB(Nodo* raiz) {
-
     int res = checa_ABB(raiz);
     if (res) printf("esta arvore e ABB\n");
 }
 
-void checa_AVL(Nodo* p) {
+int checa_AVL(Nodo* p) {
+    int qual_null = 0;
+    if (p->esq == NULL && p->dir == NULL) return 1;
+    if (p->esq == NULL) {
+        if (p->altura > 1) return 0;
+        qual_null = 1;
+    }
+    else if (p->esq->chave >= p->chave) return 0;
+    if (p->dir == NULL) {
+        if (p->altura > 1) return 0;
+        qual_null = 2;
+    }
+    else if (p->dir->chave <= p->chave) return 0;
+    if (qual_null == 1) return checa_AVL(p->dir);
+    else if (qual_null == 2) return checa_AVL(p->esq);
+    int balanco = p->dir->altura - p->esq->altura;
+    if ((balanco > 1) || (balanco < -1)) return 0;
+    return checa_AVL(p->esq) & checa_AVL(p->dir);
+}
 
-    return;
+void exibe_checa_AVL(Nodo* raiz) {
+    int res = checa_AVL(raiz);
+    if (res) printf("esta arvore e AVL\n");
 }
 
 void exibe_preordem(Nodo *p)
@@ -194,6 +213,7 @@ int main(void)
         fila = insere(fila, &arvore, chaves[i]);
         exibe_preordem(arvore);
         exibe_checa_ABB(arvore);
+        exibe_checa_AVL(arvore);
         printf("\n\n");
     }
 
