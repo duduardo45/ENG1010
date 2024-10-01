@@ -141,6 +141,29 @@ Elemento *insere(Elemento *fila, Nodo **pp, int x)
     }
 }
 
+int checa_ABB(Nodo* p) {
+    int qual_null = 0;
+    if (p->esq == NULL && p->dir == NULL) return 1;
+    if (p->esq == NULL) qual_null = 1;
+    else if (p->esq->chave >= p->chave) return 0;
+    if (p->dir == NULL) qual_null = 2;
+    else if (p->dir->chave <= p->chave) return 0;
+    if (qual_null == 1) return checa_ABB(p->dir);
+    else if (qual_null == 2) return checa_ABB(p->esq);
+    return checa_ABB(p->esq) & checa_ABB(p->dir);
+}
+
+void exibe_checa_ABB(Nodo* raiz) {
+
+    int res = checa_ABB(raiz);
+    if (res) printf("esta arvore e ABB\n");
+}
+
+void checa_AVL(Nodo* p) {
+
+    return;
+}
+
 void exibe_preordem(Nodo *p)
 {
     if (p == NULL)
@@ -170,6 +193,7 @@ int main(void)
     {
         fila = insere(fila, &arvore, chaves[i]);
         exibe_preordem(arvore);
+        exibe_checa_ABB(arvore);
         printf("\n\n");
     }
 
