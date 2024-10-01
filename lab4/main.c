@@ -177,6 +177,8 @@ void exibe_checa_ABB(Nodo *raiz)
     int res = checa_ABB(raiz);
     if (res)
         printf("esta arvore e ABB\n");
+    else
+        printf("esta arvore nao eh ABB\n");
 }
 
 int checa_AVL(Nodo *p)
@@ -215,6 +217,8 @@ void exibe_checa_AVL(Nodo *raiz)
     int res = checa_AVL(raiz);
     if (res)
         printf("esta arvore e AVL\n");
+    else
+        printf("esta arvore nao eh AVL\n");
 }
 
 void exibe_preordem(Nodo *p)
@@ -253,6 +257,7 @@ int main(void)
     }
     printf("Antes de adicionar quantidades:\n");
     exibe_preordem(arvore);
+    printf("\n");
     calcula_salva_qtd(arvore);
     printf("Depois de adicionar quantidades:\n");
     exibe_preordem(arvore);
