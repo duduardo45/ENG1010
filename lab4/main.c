@@ -35,7 +35,8 @@ struct elemento_fila
 };
 typedef struct elemento_fila Elemento;
 
-Nodo* cria_nodo(int x, int n, int h, Nodo* pai) {
+Nodo *cria_nodo(int x, int n, int h, Nodo *pai)
+{
 
     Nodo *nodo = (Nodo *)malloc(sizeof(Nodo));
     nodo->chave = x;
@@ -49,52 +50,62 @@ Nodo* cria_nodo(int x, int n, int h, Nodo* pai) {
     return nodo;
 }
 
-Elemento* cria_elemento(Nodo* nodo, Elemento* prox) {
+Elemento *cria_elemento(Nodo *nodo, Elemento *prox)
+{
 
-    Elemento* el = (Elemento *)malloc(sizeof(Elemento));
+    Elemento *el = (Elemento *)malloc(sizeof(Elemento));
     el->nodo = nodo;
     el->prox = prox;
     return el;
 }
 
-void incrementa_altura(Nodo* p) {
+void incrementa_altura(Nodo *p)
+{
     p->altura++;
-    while (p->pai != NULL) {
-        if (p->pai->esq == p) {
+    while (p->pai != NULL)
+    {
+        if (p->pai->esq == p)
+        {
             p = p->pai;
             p->altura++;
         }
-        else return;
+        else
+            return;
     }
     return;
 }
 
-void incrementa_qtd(Nodo* p) {
-
-    while (p->pai != NULL) {
-        if (p->pai->esq == p) {
-            p = p->pai;
-            p->qtd_esq++;
-        }
-        else {
-            p = p->pai;
-            p->qtd_dir++;
-        }
+int calcula_salva_qtd(Nodo *p) // retorna a quantidade de nós das subárvores + 1 (que representa o próprio nó)
+{
+    if (p->esq != NULL)
+    {
+        p->qtd_esq = calcula_salva_qtd(p->esq);
     }
-
-    return;
+    if (p->dir != NULL)
+    {
+        p->qtd_dir = calcula_salva_qtd(p->dir);
+    }
+    if (p->dir == NULL && p->esq == NULL)
+    {
+        return 1;
+    }
+    else
+    {
+        return p->qtd_dir + p->qtd_esq + 1;
+    }
 }
 
 Nodo *realiza_insercao(Nodo *p, int x, char direcao)
 {
-    Nodo *aux = cria_nodo(x,p->nivel+1,0,p);
-    if (direcao == 'e') {
+    Nodo *aux = cria_nodo(x, p->nivel + 1, 0, p);
+    if (direcao == 'e')
+    {
         p->esq = aux;
         incrementa_altura(p);
-        incrementa_qtd(aux);
-    } else if (direcao == 'd') {
+    }
+    else if (direcao == 'd')
+    {
         p->dir = aux;
-        incrementa_qtd(aux);
     }
     return aux;
 }
@@ -122,7 +133,7 @@ Elemento *insere(Elemento *fila, Nodo **pp, int x)
     Nodo *p = *pp;
     if (p == NULL)
     {
-        p = cria_nodo(x,0,0,NULL);
+        p = cria_nodo(x, 0, 0, NULL);
         *pp = p;
         return insere_fila(fila, p);
     }
@@ -141,25 +152,36 @@ Elemento *insere(Elemento *fila, Nodo **pp, int x)
     }
 }
 
-int checa_ABB(Nodo* p) {
+int checa_ABB(Nodo *p)
+{
     int qual_null = 0;
-    if (p->esq == NULL && p->dir == NULL) return 1;
-    if (p->esq == NULL) qual_null = 1;
-    else if (p->esq->chave >= p->chave) return 0;
-    if (p->dir == NULL) qual_null = 2;
-    else if (p->dir->chave <= p->chave) return 0;
-    if (qual_null == 1) return checa_ABB(p->dir);
-    else if (qual_null == 2) return checa_ABB(p->esq);
+    if (p->esq == NULL && p->dir == NULL)
+        return 1;
+    if (p->esq == NULL)
+        qual_null = 1;
+    else if (p->esq->chave >= p->chave)
+        return 0;
+    if (p->dir == NULL)
+        qual_null = 2;
+    else if (p->dir->chave <= p->chave)
+        return 0;
+    if (qual_null == 1)
+        return checa_ABB(p->dir);
+    else if (qual_null == 2)
+        return checa_ABB(p->esq);
     return checa_ABB(p->esq) & checa_ABB(p->dir);
 }
 
-void exibe_checa_ABB(Nodo* raiz) {
+void exibe_checa_ABB(Nodo *raiz)
+{
 
     int res = checa_ABB(raiz);
-    if (res) printf("esta arvore e ABB\n");
+    if (res)
+        printf("esta arvore e ABB\n");
 }
 
-void checa_AVL(Nodo* p) {
+void checa_AVL(Nodo *p)
+{
 
     return;
 }
@@ -168,15 +190,17 @@ void exibe_preordem(Nodo *p)
 {
     if (p == NULL)
         printf("arvore nao foi criada\n");
-        
-    printf("ptr_no=%p, chave=%d\tnivel=%d\taltura=%d qtd_esq=%d qtd_dir=%d pai=",\
-                    p, p->chave, p->nivel, p->altura,p->qtd_esq,p->qtd_dir);
-    printf("%p\t",p->pai);
-    if (p->pai == NULL) printf("\t");
+
+    printf("ptr_no=%p, chave=%d\tnivel=%d\taltura=%d qtd_esq=%d qtd_dir=%d pai=",
+           p, p->chave, p->nivel, p->altura, p->qtd_esq, p->qtd_dir);
+    printf("%p\t", p->pai);
+    if (p->pai == NULL)
+        printf("\t");
     printf("esq=");
-    printf("%p\t",p->esq);
-    if (p->esq == NULL) printf("\t");
-    printf("dir=%p\n",p->dir);
+    printf("%p\t", p->esq);
+    if (p->esq == NULL)
+        printf("\t");
+    printf("dir=%p\n", p->dir);
 
     if (p->esq != NULL)
         exibe_preordem(p->esq);
@@ -192,10 +216,14 @@ int main(void)
     for (int i = 0; i < 10; i++)
     {
         fila = insere(fila, &arvore, chaves[i]);
-        exibe_preordem(arvore);
         exibe_checa_ABB(arvore);
         printf("\n\n");
     }
+    printf("Antes de adicionar quantidades:\n");
+    exibe_preordem(arvore);
+    calcula_salva_qtd(arvore);
+    printf("Depois de adicionar quantidades:\n");
+    exibe_preordem(arvore);
 
     return 0;
 }
