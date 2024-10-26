@@ -5,43 +5,49 @@
 #define TABLE_SIZE 1000
 #define VAZIO -1
 
-int hash_function(int cpf, int tentativa) {
-    return cpf % TABLE_SIZE;
+int hash_function(long cpf, int tentativa) {
+    return (cpf + tentativa) % TABLE_SIZE;
 }
 
-void solve_collision(int* table, int cpf, int* collision_num, int num_chaves){
+void solve_collision(long* table, long cpf, int* collision_num, int num_chaves, int* collision_count){
+
+    // registra toda vez que acontece uma colisao, mesmo em tentativas subsequentes
     int i;
-    for(i=0; collision_num[i] == VAZIO; i++);
+    for(i=0; collision_num[i] != VAZIO;) i++;
     collision_num[i] = num_chaves;
 
     int hash;
     int tentativa = 1;
     do {
+        // se tentou demais a tabela esta efetivamente cheia
+        if (tentativa > TABLE_SIZE){
+            printf("Função hash falhou\n");
+            exit(1);
+        }
+        collision_count[i] += 1;
+
         hash = hash_function(cpf, tentativa);
         tentativa++;
     } while(table[hash] != VAZIO);
 
-    if (tentativa > TABLE_SIZE){
-        printf("Função hash falhou\n");
-        exit(1);
-    }
     table[hash] = cpf;
 }
 
 int main() {
     int num_chaves = 0;
 
+    // guarda onde aconteceram as colisões para mostrar depois
     int collision_num[TABLE_SIZE];
+    int collision_count[TABLE_SIZE];
 
     // hash table
-    int hash_table[TABLE_SIZE];
+    long hash_table[TABLE_SIZE];
 
+    // inicializa os vetores
     for(int i = 0; i< TABLE_SIZE; i++){
         hash_table[i] = VAZIO;
-    }
-
-    for(int i = 0; i< TABLE_SIZE; i++){
         collision_num[i] = VAZIO;
+        collision_count[i] = 0;
     }
     
     FILE *file = fopen("cpfs.txt", "r");
@@ -50,11 +56,12 @@ int main() {
         return 1;
     }
 
-    int cpf;
-    while (fscanf(file, " %d", &cpf) != EOF) {
+    long cpf;
+    while (fscanf(file, "%ld", &cpf) == 1) {
+        
         int hash = hash_function(cpf, 0);
         if (hash_table[hash] != VAZIO){
-            solve_collision(hash_table, cpf, collision_num, num_chaves);
+            solve_collision(hash_table, cpf, collision_num, num_chaves, collision_count);
         }
         else{
             hash_table[hash] = cpf;
@@ -64,5 +71,28 @@ int main() {
 
     // close file
     fclose(file);
+
+    FILE *output = fopen("hash.csv", "w");
+    if (output == NULL) {
+        printf("Error opening file\n");
+        return 1;
+    }
+
+    FILE *collisions = fopen("colisoes.csv", "w");
+    if (collisions == NULL) {
+        printf("Error opening file\n");
+        return 1;
+    }
+
+    fprintf(output, "cpf\n");
+    fprintf(collisions, "colision,count\n");
+
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        fprintf(output, "%ld\n",hash_table[i]);
+        fprintf(collisions, "%d,%d\n",collision_num[i],collision_count[i]);
+    }
+
+    fclose(output);
+    fclose(collisions);
     return 0;
 }
