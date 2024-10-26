@@ -6,7 +6,8 @@
 #define VAZIO -1
 
 int hash_function(long cpf, int tentativa) {
-    return (cpf + tentativa) % TABLE_SIZE;
+    unsigned int temp = ((unsigned int)(cpf >> 32)) ^ ((unsigned int) cpf);
+    return (3*temp + tentativa) % TABLE_SIZE;
 }
 
 void solve_collision(long* table, long cpf, int* collision_num, int num_chaves, int* collision_count){
