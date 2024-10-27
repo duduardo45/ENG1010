@@ -1,5 +1,11 @@
-# não sei o que por aqui ainda.
+# ignora arquivos sem extensão
+*
+!/**/
+!*.*
+
 venv/
 .venv/
 env/
 .env/
+
+.zip
