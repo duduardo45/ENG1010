@@ -10,12 +10,12 @@ int hash_function(long cpf, int tentativa) {
     return (3*temp + tentativa) % TABLE_SIZE;
 }
 
-void solve_collision(long* table, long cpf, int* collision_num, int num_chaves, int* collision_count){
+void solve_collision(long* table, long cpf, int* collision_count, int num_chaves){
 
     // registra toda vez que acontece uma colisao, mesmo em tentativas subsequentes
-    int i;
-    for(i=0; collision_num[i] != VAZIO;) i++;
-    collision_num[i] = num_chaves;
+    // int i;
+    // for(i=0; collision_num[i] != VAZIO;) i++;
+    // collision_num[i] = num_chaves;
 
     int hash;
     int tentativa = 1;
@@ -25,7 +25,7 @@ void solve_collision(long* table, long cpf, int* collision_num, int num_chaves, 
             printf("Função hash falhou\n");
             exit(1);
         }
-        collision_count[i] += 1;
+        collision_count[num_chaves] += 1;
 
         hash = hash_function(cpf, tentativa);
         tentativa++;
@@ -38,7 +38,7 @@ int main() {
     int num_chaves = 0;
 
     // guarda onde aconteceram as colisões para mostrar depois
-    int collision_num[TABLE_SIZE];
+    // int collision_num[TABLE_SIZE];
     int collision_count[TABLE_SIZE];
 
     // hash table
@@ -47,7 +47,7 @@ int main() {
     // inicializa os vetores
     for(int i = 0; i< TABLE_SIZE; i++){
         hash_table[i] = VAZIO;
-        collision_num[i] = VAZIO;
+        // collision_num[i] = VAZIO;
         collision_count[i] = 0;
     }
     
@@ -62,7 +62,7 @@ int main() {
         printf("colocando cpf %ld\n", cpf);
         int hash = hash_function(cpf, 0);
         if (hash_table[hash] != VAZIO){
-            solve_collision(hash_table, cpf, collision_num, num_chaves, collision_count);
+            solve_collision(hash_table, cpf, collision_count, num_chaves);
         }
         else{
             hash_table[hash] = cpf;
@@ -90,7 +90,7 @@ int main() {
 
     for (int i = 0; i < TABLE_SIZE; i++) {
         fprintf(output, "%ld\n",hash_table[i]);
-        fprintf(collisions, "%d,%d\n",collision_num[i],collision_count[i]);
+        if (i < num_chaves) fprintf(collisions, "%d,%d\n",i+1,collision_count[i]);
     }
 
     fclose(output);
