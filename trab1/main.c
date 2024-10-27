@@ -2,14 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#define TABLE_SIZE 1000
+#define TABLE_SIZE 1543
 #define VAZIO -1
 
-int hash_function(int cpf, int tentativa) {
+long int hash_function(long int cpf, int tentativa) {
     return cpf % TABLE_SIZE;
 }
 
-void solve_collision(int* table, int cpf, int* collision_num, int num_chaves){
+void solve_collision(long int* table, long int cpf, int* collision_num, int num_chaves){
     int i;
     for(i=0; collision_num[i] == VAZIO; i++);
     collision_num[i] = num_chaves;
@@ -34,7 +34,7 @@ int main() {
     int collision_num[TABLE_SIZE];
 
     // hash table
-    int hash_table[TABLE_SIZE];
+    long int hash_table[TABLE_SIZE];
 
     for(int i = 0; i< TABLE_SIZE; i++){
         hash_table[i] = VAZIO;
@@ -50,8 +50,9 @@ int main() {
         return 1;
     }
 
-    int cpf;
-    while (fscanf(file, " %d", &cpf) != EOF) {
+    long int cpf;
+    while (fscanf(file, " %ld", &cpf) == 1) {
+        printf("colocando cpf %ld\n", cpf);
         int hash = hash_function(cpf, 0);
         if (hash_table[hash] != VAZIO){
             solve_collision(hash_table, cpf, collision_num, num_chaves);
