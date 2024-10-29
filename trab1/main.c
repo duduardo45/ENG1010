@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#define TABLE_SIZE 1543
+#define TABLE_SIZE 1031
 #define VAZIO -1
 
 int hash_function(long cpf, int tentativa) {
@@ -36,6 +36,7 @@ void solve_collision(long* table, long cpf, int* collision_count, int num_chaves
 
 int main() {
     int num_chaves = 0;
+    int total_collisions;
 
     // guarda onde aconteceram as colisões para mostrar depois
     // int collision_num[TABLE_SIZE];
@@ -62,6 +63,7 @@ int main() {
         printf("colocando cpf %ld\n", cpf);
         int hash = hash_function(cpf, 0);
         if (hash_table[hash] != VAZIO){
+            total_collisions++;
             solve_collision(hash_table, cpf, collision_count, num_chaves);
         }
         else{
@@ -95,5 +97,8 @@ int main() {
 
     fclose(output);
     fclose(collisions);
+
+    printf("Houve %d colisões no total\n", total_collisions);
+    printf("Sobraram %d posições vazias no vetor\n", TABLE_SIZE - 1000);
     return 0;
 }
