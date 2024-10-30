@@ -10,6 +10,16 @@ int hash_function(long cpf, int tentativa) {
     return (3*temp + tentativa) % TABLE_SIZE;
 }
 
+int busca_no_hash(long cpf, long* table){
+    int tentativa = 0;
+    int hash;
+    do {
+        hash = hash_function(cpf, tentativa);
+        tentativa++;
+    } while (table[hash] != cpf);
+    return hash;
+}
+
 void solve_collision(long* table, long cpf, int* collision_count, int num_chaves){
 
     // registra toda vez que acontece uma colisao, mesmo em tentativas subsequentes
@@ -36,7 +46,6 @@ void solve_collision(long* table, long cpf, int* collision_count, int num_chaves
 
 int main() {
     int num_chaves = 0;
-    int total_collisions;
 
     // guarda onde aconteceram as colisões para mostrar depois
     // int collision_num[TABLE_SIZE];
@@ -63,7 +72,6 @@ int main() {
         printf("colocando cpf %ld\n", cpf);
         int hash = hash_function(cpf, 0);
         if (hash_table[hash] != VAZIO){
-            total_collisions++;
             solve_collision(hash_table, cpf, collision_count, num_chaves);
         }
         else{
@@ -88,7 +96,7 @@ int main() {
     }
 
     fprintf(output, "cpf\n");
-    fprintf(collisions, "colision,count\n");
+    fprintf(collisions, "collision,count\n");
 
     for (int i = 0; i < TABLE_SIZE; i++) {
         fprintf(output, "%ld\n",hash_table[i]);
@@ -98,7 +106,15 @@ int main() {
     fclose(output);
     fclose(collisions);
 
+    int total_collisions;
+    for (int i = 0; i < TABLE_SIZE; i++){
+        total_collisions+=collision_count[i];
+    }
+
     printf("Houve %d colisões no total\n", total_collisions);
     printf("Sobraram %d posições vazias no vetor\n", TABLE_SIZE - 1000);
+    
+    int hash = busca_no_hash(69172073900, hash_table);
+    printf("buscando 69172073900: %d, %ld\n", hash, hash_table[hash]);
     return 0;
 }
