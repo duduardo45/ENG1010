@@ -15,6 +15,25 @@ struct b_plus_node
     int overflow_key;
 };
 
+int is_key_in_node(Node* node, int key) { // booleano
+    return key == node->key1 || key == node->key2; 
+}
+
+Node* find_node_of_key(Node* root, int key) {
+    if (root->ptr1 == NULL) {
+        return is_key_in_node(root, key) ? root : NULL; // se tá no nó, retorna agora, se não tá, é porque não achou na árvore
+    }
+    if (key < root->key1) {
+        return find_node_of_key(root->ptr1, key);
+    }
+    else if (key < root->key2) {
+        return find_node_of_key(root->ptr2, key);
+    }
+    else {
+        return find_node_of_key(root->ptr3, key);
+    }
+}
+
 Node *create_node(Node *ptr1, int key1, Node *ptr2, int key2, Node *ptr3, int overflow_key)
 {
     Node *node = (Node *)malloc(sizeof(Node));
@@ -118,6 +137,7 @@ int main(void)
     insert_key_in_tree(&tree, 40);
     insert_key_in_tree(&tree, 50);
     insert_key_in_tree(&tree, 60);
+    Node* value = find_node_of_key(tree, 50);
 
     return 0;
 }
