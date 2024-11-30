@@ -42,7 +42,7 @@ Node* find_parent_node(Node** ptree, Node* child) {
     Node* parent_node = NULL;
 
     // procura até as folhas e insere na folha
-    while (current_node->ptr1 != NULL)
+    while (current_node != child)
     {
         parent_node = current_node;
         if (key < current_node->key1)
