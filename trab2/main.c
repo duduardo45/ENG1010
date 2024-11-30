@@ -29,6 +29,7 @@ Node *create_node(Node *ptr1, int key1, Node *ptr2, int key2, Node *ptr3, int ov
 
 void insert_key_in_node(Node *node, int key)
 {
+    // insere e shifta o que tiver pra direita
     if (key < node->key1)
     {
         node->overflow_key = node->key2;
@@ -46,18 +47,27 @@ void insert_key_in_node(Node *node, int key)
     }
 }
 
+void fix_inner_nodes(Node **ptree, Node *broken_node);
+
 void insert_key_in_tree(Node **ptree, int key)
 {
+    // cria a raiz se estiver vazia
     if (*ptree == NULL)
     {
         Node *root = create_node(NULL, key, NULL, -1, NULL, -1);
         *ptree = root;
     }
+
+    // insere normal
     else
     {
         Node *current_node = *ptree;
+        Node* parent_node = NULL;
+
+        // procura até as folhas e insere na folha
         while (current_node->ptr1 != NULL)
         {
+            parent_node = current_node;
             if (key < current_node->key1)
             {
                 current_node = current_node->ptr1;
@@ -72,16 +82,34 @@ void insert_key_in_tree(Node **ptree, int key)
             }
         }
         insert_key_in_node(current_node, key);
+
+        // checa por overflow na folha e faz a cisão
         if (current_node->overflow_key != -1) {
+
+            // faz a cisão na folha
+            int parent_key = current_node->key2;
             Node* left_child_node = current_node; 
-            Node* right_child_node = create_node(NULL, left_child_node->key2, NULL, left_child_node->overflow_key, NULL, -1);
-            // create a new root with the median key (key2)
-            Node* parent_node = create_node(left_child_node, left_child_node->key2, right_child_node, -1, NULL, -1);
-            left_child_node->key2 = -1;
+            Node* right_child_node = create_node(NULL, parent_key, NULL, left_child_node->overflow_key, NULL, -1);
+            left_child_node->key2 = -1; 
             left_child_node->overflow_key = -1;
-            *ptree = parent_node;
+
+            // testa se a raiz for a unica chave
+            if (parent_node == NULL) {
+                Node* parent_node = create_node(left_child_node, parent_key, right_child_node, -1, NULL, -1);
+                *ptree = parent_node; 
+            }
+            else { // senão insere no
+                insert_key_in_node(parent_node, key);
+                // faz a cisão nos nós internos que precisarem
+                if (parent_node->overflow_key != -1) fix_inner_nodes(ptree, parent_node);
+            }
         }
     }
+}
+
+void fix_inner_nodes(Node **ptree, Node *broken_node) {
+
+    
 }
 
 int main(void)
