@@ -222,22 +222,89 @@ int find_direction(Node* parent, Node* child) {
     return -1;
 }
 
-void fix_removal(Node *parent_node) // encontra o filho vazio e resolve pra ele
+void fix_removal(Node** ptree, Node *broken, Node *parent) // encontra o filho vazio e resolve pra ele
 {
-    int direction;
-    if (parent_node == NULL)
-    {
+    int direction = find_direction(parent, broken);
+
+
+
+    int flag_conserto = 0;
+    Node *next_parent_node = find_parent_node(*ptree, parent);
+    int direction = find_direction(parent, broken);
+    Node *sibling = NULL;
+    if (direction == 1) { // Leftmost child
+        sibling = parent->ptr2;
+    } else if (direction == 2) { // Middle child
+        sibling = parent->ptr1->key2 != -1 ? parent->ptr1 : parent->ptr3;
+    } else if (direction == 3) { // Rightmost child
+        sibling = parent->ptr2;
     }
-    else
-    {
-        if (direction == 1)
-        {
-            parent_node->key1 = parent_node->key2;
-            parent_node->ptr1 = parent_node->ptr2;
-            parent_node->ptr2 = parent_node->ptr3;
-            parent_node->ptr3 = NULL;
+    // tenta redistribuicao pra algum lado primeiro
+    if (direction == 1) {
+        if (parent->ptr2->key2 != -1) {
+            // redistribui
+            broken->key1 = sibling->key1;
+            parent->key1 = sibling->key2;
+            sibling->key1 = sibling->key2;
+            sibling->key2 = -1;
+        } else {
+            // concatena
+            if (parent->key2 != -1) {
+            broken->key1 = sibling->key1;
+            parent->key1 = parent->key2;
+            parent->key2 = -1;
+            parent->ptr2 = parent->ptr3;
+            parent->ptr3 = NULL;
+            free(sibling);
+            }
+            else {
+                flag_conserto = 1;
+                free(broken);
+                parent->ptr1 = parent->ptr2;
+                parent->ptr2 = NULL;
+            }
+        }
+    } else if (direction == 3) {
+        if (parent->ptr2->key2 != -1) {
+            // redistribui
+            broken->key1 = sibling->key2;
+            parent->key2 = sibling->key2;
+            sibling->key2 = -1;
+        } else {
+            // concatena
+            free(broken);
+            parent->key2 = -1;
+            parent->ptr3 = NULL;
+        }
+    } else if (direction == 2) {
+        if (parent->ptr3->key2 != -1) {
+            // redistribui da direita
+            broken->key1 = sibling->key1;
+            parent->key2 = sibling->key2;
+            sibling->key1 = sibling->key2;
+            sibling->key2 = -1;
+        } else if (parent->ptr1->key2 != -1) {
+            // redistribui da esquerda
+            broken->key1 = sibling->key2;
+            parent->key1 = sibling->key2;
+            sibling->key2 = -1;
+        } else {
+            if (parent->key2 != -1) {
+            // concatena da direita
+            free(broken);
+            parent->key2 = -1;
+            parent->ptr2 = parent->ptr3;
+            parent->ptr3 = NULL;
+            }
+            else {
+                // concatena da esquerda
+                flag_conserto = 1;
+                parent->ptr1->key2 = parent->key1;
+                free(broken);
+            }
         }
     }
+    if (flag_conserto) fix_removal(ptree, parent, next_parent_node);
 }
 
 void remove_key(Node **ptree, int key)
@@ -251,8 +318,9 @@ void remove_key(Node **ptree, int key)
     node->key2 = -1;
 
     Node *current_node = node;
-    while (current_node->key1 == -1)
+    if (current_node->key1 == -1)
     {
+        int flag_conserto = 0;
         Node *next_parent_node = find_parent_node(*ptree, parent_node);
         int direction = find_direction(parent_node, current_node);
         Node *sibling = NULL;
@@ -267,25 +335,68 @@ void remove_key(Node **ptree, int key)
         if (direction == 1) {
             if (parent_node->ptr2->key2 != -1) {
                 // redistribui
+                current_node->key1 = sibling->key1;
+                parent_node->key1 = sibling->key2;
+                sibling->key1 = sibling->key2;
+                sibling->key2 = -1;
             } else {
                 // concatena
+                if (parent_node->key2 != -1) {
+                current_node->key1 = sibling->key1;
+                parent_node->key1 = parent_node->key2;
+                parent_node->key2 = -1;
+                parent_node->ptr2 = parent_node->ptr3;
+                parent_node->ptr3 = NULL;
+                free(sibling);
+                }
+                else {
+                    flag_conserto = 1;
+                    free(current_node);
+                    parent_node->ptr1 = parent_node->ptr2;
+                    parent_node->ptr2 = NULL;
+                }
             }
         } else if (direction == 3) {
             if (parent_node->ptr2->key2 != -1) {
                 // redistribui
+                current_node->key1 = sibling->key2;
+                parent_node->key2 = sibling->key2;
+                sibling->key2 = -1;
             } else {
                 // concatena
+                free(current_node);
+                parent_node->key2 = -1;
+                parent_node->ptr3 = NULL;
             }
         } else if (direction == 2) {
             if (parent_node->ptr3->key2 != -1) {
                 // redistribui da direita
+                current_node->key1 = sibling->key1;
+                parent_node->key2 = sibling->key2;
+                sibling->key1 = sibling->key2;
+                sibling->key2 = -1;
             } else if (parent_node->ptr1->key2 != -1) {
                 // redistribui da esquerda
+                current_node->key1 = sibling->key2;
+                parent_node->key1 = sibling->key2;
+                sibling->key2 = -1;
             } else {
+                if (parent_node->key2 != -1) {
                 // concatena da direita
+                free(current_node);
+                parent_node->key2 = -1;
+                parent_node->ptr2 = parent_node->ptr3;
+                parent_node->ptr3 = NULL;
+                }
+                else {
+                    // concatena da esquerda
+                    flag_conserto = 1;
+                    parent_node->ptr1->key2 = parent_node->key1;
+                    free(current_node);
+                }
             }
         }
-        current_node = parent_node;
+        if (flag_conserto) fix_removal(ptree, parent_node, next_parent_node);
     }
 }
 
@@ -317,6 +428,12 @@ int main(void)
     display_tree(tree, 0);
     printf("\n");
     insert_key_in_tree(&tree, 80);
+    display_tree(tree, 0);
+    printf("\n");
+    remove_key(&tree, 90);
+    display_tree(tree, 0);
+    printf("\n");
+    remove_key(&tree, 40);
     display_tree(tree, 0);
     printf("\n");
     
