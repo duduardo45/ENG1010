@@ -230,7 +230,6 @@ void fix_removal(Node** ptree, Node *broken, Node *parent) // encontra o filho v
 
     int flag_conserto = 0;
     Node *next_parent_node = find_parent_node(*ptree, parent);
-    int direction = find_direction(parent, broken);
     Node *sibling = NULL;
     if (direction == 1) { // Leftmost child
         sibling = parent->ptr2;
@@ -310,6 +309,7 @@ void fix_removal(Node** ptree, Node *broken, Node *parent) // encontra o filho v
 void remove_key(Node **ptree, int key)
 { // parte do pressuposto de que a chave está na árvore
     Node *node = find_node_of_key(*ptree, key);
+    if (node == NULL) return;
     Node *parent_node = find_parent_node(*ptree, node);
     if (node->key1 == key)
     {
@@ -404,29 +404,13 @@ int main(void)
 {
     Node *tree = NULL;
     insert_key_in_tree(&tree, 10);
-    display_tree(tree, 0);
-    printf("\n");
     insert_key_in_tree(&tree, 60);
-    display_tree(tree, 0);
-    printf("\n");
     insert_key_in_tree(&tree, 20);
-    display_tree(tree, 0);
-    printf("\n");
     insert_key_in_tree(&tree, 25);
-    display_tree(tree, 0);
-    printf("\n");
     insert_key_in_tree(&tree, 30);
-    display_tree(tree, 0);
-    printf("\n");
     insert_key_in_tree(&tree, 90);
-    display_tree(tree, 0);
-    printf("\n");
     insert_key_in_tree(&tree, 40);
-    display_tree(tree, 0);
-    printf("\n");
     insert_key_in_tree(&tree, 50);
-    display_tree(tree, 0);
-    printf("\n");
     insert_key_in_tree(&tree, 80);
     display_tree(tree, 0);
     printf("\n");
