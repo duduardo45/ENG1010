@@ -215,6 +215,13 @@ void fix_inner_nodes(Node **ptree, Node *broken_node, Node* leftover) {
     }
 }
 
+int find_direction(Node* parent, Node* child) {
+    if (parent->ptr1 == child) return 1;
+    else if (parent->ptr2 == child) return 2;
+    else if (parent->ptr3 == child) return 3;
+    return -1;
+}
+
 void fix_removal(Node *parent_node) // encontra o filho vazio e resolve pra ele
 {
     int direction;
@@ -232,6 +239,7 @@ void fix_removal(Node *parent_node) // encontra o filho vazio e resolve pra ele
         }
     }
 }
+
 void remove_key(Node **ptree, int key)
 { // parte do pressuposto de que a chave está na árvore
     Node *node = find_node_of_key(*ptree, key);
@@ -240,16 +248,44 @@ void remove_key(Node **ptree, int key)
     {
         node->key1 = node->key2;
     }
-    else
-        node->key2 = -1;
+    node->key2 = -1;
 
     Node *current_node = node;
     while (current_node->key1 == -1)
     {
         Node *next_parent_node = find_parent_node(*ptree, parent_node);
-        fix_removal(parent_node);
+        int direction = find_direction(parent_node, current_node);
+        Node *sibling = NULL;
+        if (direction == 1) { // Leftmost child
+            sibling = parent_node->ptr2;
+        } else if (direction == 2) { // Middle child
+            sibling = parent_node->ptr1->key2 != -1 ? parent_node->ptr1 : parent_node->ptr3;
+        } else if (direction == 3) { // Rightmost child
+            sibling = parent_node->ptr2;
+        }
+        // tenta redistribuicao pra algum lado primeiro
+        if (direction == 1) {
+            if (parent_node->ptr2->key2 != -1) {
+                // redistribui
+            } else {
+                // concatena
+            }
+        } else if (direction == 3) {
+            if (parent_node->ptr2->key2 != -1) {
+                // redistribui
+            } else {
+                // concatena
+            }
+        } else if (direction == 2) {
+            if (parent_node->ptr3->key2 != -1) {
+                // redistribui da direita
+            } else if (parent_node->ptr1->key2 != -1) {
+                // redistribui da esquerda
+            } else {
+                // concatena da direita
+            }
+        }
         current_node = parent_node;
-        parent_node = next_parent_node;
     }
 }
 
