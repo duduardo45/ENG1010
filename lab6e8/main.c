@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #define NUMERO_NOS 9
 
@@ -30,36 +31,47 @@ void adicionar_link(Grafo *grafo, int noi, int noj, float peso)
 int* busca_em_amplitude(Grafo* grafo, int no_inicio)
 {
     int* visitados = (int*)malloc(grafo->nv * sizeof(int));
+    int* fila = (int*)malloc(grafo->nv * sizeof(int));
+    int inicio_fila = 0;
+    int fim_fila = 0;
+    int contador = 0;
+    
+    // vetor visitados dá a ordem de visitação
 
-    // Inicializa vetor de visitados com -1 (não visitado)
+    // Inicializa vetor de visitados com -1
     for (int i = 0; i < grafo->nv; i++) {
         visitados[i] = -1;
     }
 
-    // Marca nó inicial como visitado
-    visitados[no_inicio] = 0;
-    int nivel = 1;
+    // Adiciona no inicial na fila e marca como visitado
+    fila[fim_fila++] = no_inicio;
+    visitados[contador++] = no_inicio;
 
-    // Enquanto houver nós para visitar
-    int mudou = 1;
-    while (mudou) {
-        mudou = 0;
-        // Para cada nó do grafo
-        for (int i = 0; i < grafo->nv; i++) {
-            // Se foi visitado no nível anterior
-            if (visitados[i] == nivel - 1) {
-                // Visita todos os vizinhos não visitados
-                for (Viz* v = grafo->viz[i]; v != NULL; v = v->prox) {
-                    if (visitados[v->noj] == -1) {
-                        visitados[v->noj] = nivel;
-                        mudou = 1;
-                    }
+    // Enquanto houver nos na fila
+    while (inicio_fila < fim_fila) {
+        int no_atual = fila[inicio_fila++];
+        
+        // Percorre todos os vizinhos do no atual
+        for (Viz* v = grafo->viz[no_atual]; v != NULL; v = v->prox) {
+            int ja_visitado = 0;
+            
+            // Verifica se ja foi visitado
+            for (int i = 0; i < contador; i++) {
+                if (visitados[i] == v->noj) {
+                    ja_visitado = 1;
+                    break;
                 }
             }
+            
+            // Se nao foi visitado, adiciona na fila e marca como visitado
+            if (!ja_visitado) {
+                fila[fim_fila++] = v->noj;
+                visitados[contador++] = v->noj;
+            }
         }
-        nivel++;
     }
 
+    free(fila);
     return visitados;
 }
 
@@ -86,4 +98,9 @@ int main(void)
     adicionar_link(grafo, 4, 5, 9);
     adicionar_link(grafo, 7, 6, 2);
     adicionar_link(grafo, 4, 6, 14);
+    int* visitados = busca_em_amplitude(grafo, 0);
+    for (int i = 0; i < NUMERO_NOS; i++) {
+        printf("%d ", visitados[i]);
+    }
+    printf("\n");
 }
