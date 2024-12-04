@@ -214,6 +214,7 @@ int main(void)
     adicionar_link(grafo, 6, 7, 2.0);
     adicionar_link(grafo, 6, 4, 14.0);
     int *visitados = busca_em_amplitude(grafo, 0);
+    printf("Busca em amplitude:\n");
     for (int i = 0; i < NUMERO_NOS; i++)
     {
         printf("%d ", visitados[i]);
